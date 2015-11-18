@@ -1,0 +1,17 @@
+#!/bin/sh
+BASEDIR=$(cd $(dirname $0); /bin/pwd)
+if [ ! -z $DOCKER_MACHINE_NAME ]; then
+    ip=$(docker-machine ip $DOCKER_MACHINE_NAME)
+
+    docker run -d \
+        --name sftp_server \
+        -v $BASEDIR/share:/home/foo/share \
+        -p 22222:22 \
+        atmoz/sftp \
+        foo:123:1000 && \
+    echo "sftp://${ip}:22222/ - username: foo password: 123" && \
+    echo "sftp -P 22222/ foo@${ip}"
+else
+    echo "docker-machine is needed."
+    echo "Check your environment for \$DOCKER_MACHINE_NAME"
+fi
